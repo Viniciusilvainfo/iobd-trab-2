@@ -31,6 +31,8 @@ public class Main {
             int opcao = scanner.nextInt();
             scanner.nextLine();
 
+            boolean ret;
+
             switch (opcao) {
                 case 1:
                     System.out.print("Título: ");
@@ -47,8 +49,11 @@ public class Main {
 
                     try {
                         Path caminho = Paths.get(foto);
-                        anotacaoService.criarAnotacao(titulo, descricao, cor, Files.readAllBytes(caminho));
-                        System.out.println("Anotação criada com sucesso.");
+                        ret = anotacaoService.criarAnotacao(titulo, descricao, cor, Files.readAllBytes(caminho));
+
+                        if(ret == true)
+                            System.out.println("Anotação criada com sucesso.");
+
                     } catch (IOException e) {
                         System.out.println("Erro ao ler o arquivo de foto: " + e.getMessage());
                     } catch (Exception e) {
@@ -59,15 +64,23 @@ public class Main {
                 case 2:
                     List<Anotacao> anotacoes = anotacaoService.listarAnotacoesOrdenadas();
                     for (Anotacao anotacao : anotacoes) {
-                        System.out.println(anotacao);
+                        System.out.println("Anotação: " + anotacao.getTitulo() + " com a cor: " + anotacao.getCor() + " e com a descrição " + anotacao.getDescricao());
                     }
                     break;
                 case 3:
                     System.out.print("Digite o ID da anotação para excluir: ");
                     int idExcluir = scanner.nextInt();
+                    scanner.nextLine();
 
-                    anotacaoService.excluirAnotacao(idExcluir);
-                    System.out.println("Anotação excluída com sucesso.");
+                    Anotacao anotacaoExcluir = anotacaoService.buscarPorId(idExcluir);
+
+                    if (anotacaoExcluir == null)
+                        break;
+
+                    ret = anotacaoService.excluirAnotacao(idExcluir);
+                    
+                    if(ret == true)
+                        System.out.println("Anotação excluída com sucesso.");
                     break;
                 case 4:
                     System.out.print("Digite o ID da anotação para atualizar: ");
@@ -75,10 +88,8 @@ public class Main {
                     scanner.nextLine();
                     Anotacao anotacao = anotacaoService.buscarPorId(idAtualizar);
     
-                    if (anotacao == null) {
-                        System.out.println("Anotação não encontrada.");
+                    if (anotacao == null)
                         break;
-                    }
 
                     System.out.print("Título: ");
                     String novoTitulo = scanner.nextLine();
@@ -99,8 +110,10 @@ public class Main {
                         anotacao.setDescricao(novaDescricao);
                         anotacao.setCor(novaCor);
                         anotacao.setFoto(Files.readAllBytes(novoCaminho));
-                        anotacaoService.atualizarAnotacao(anotacao);
-                        System.out.println("Anotação atualizada com sucesso.");
+                        ret = anotacaoService.atualizarAnotacao(anotacao);
+
+                        if(ret == true)
+                            System.out.println("Anotação atualizada com sucesso.");
                     } catch (IOException e) {
                         System.out.println("Erro ao ler o arquivo de foto: " + e.getMessage());
                     } catch (Exception e) {
@@ -115,8 +128,10 @@ public class Main {
                     int idCopiar = scanner.nextInt();
 
                     try {
-                        anotacaoService.copiarAnotacao(idCopiar);
-                        System.out.println("Anotação copiada com sucesso.");
+                        ret = anotacaoService.copiarAnotacao(idCopiar);
+
+                        if(ret == true)
+                            System.out.println("Anotação copiada com sucesso.");
                     } catch (Exception e) {
                         System.out.println("Erro ao copiar anotação: " + e.getMessage());
                     }

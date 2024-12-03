@@ -5,7 +5,7 @@ CREATE DATABASE anotacoes;
 \c anotacoes;
 
 CREATE TABLE anotacao (
-    id SERIAL AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
     descricao TEXT,
     cor VARCHAR(50),

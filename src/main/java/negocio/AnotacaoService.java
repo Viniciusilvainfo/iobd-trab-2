@@ -12,52 +12,69 @@ public class AnotacaoService {
         this.anotacaoDAO = anotacaoDAO;
     }
 
-    public void criarAnotacao(String titulo, String descricao, String cor, byte[] foto) {
+    public boolean criarAnotacao(String titulo, String descricao, String cor, byte[] foto) {
         Anotacao anotacao = new Anotacao(titulo, descricao, cor, foto);
 
         try {
-            if (!anotacaoDAO.inserir(anotacao))
-                throw new RuntimeException("Falha ao inserir a anotação no banco de dados.");
+            if (!anotacaoDAO.inserir(anotacao)) {
+                System.out.println("Falha ao inserir a anotação no banco de dados.");
+                return false;
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir anotação no banco de dados: " + e.getMessage());
+            System.out.println("Erro ao inserir anotação no banco de dados: " + e.getMessage());
+            return false;
         }
+
+        return true;
     }
 
-    public void atualizarAnotacao(Anotacao anotacao) {
+    public boolean atualizarAnotacao(Anotacao anotacao) {
         try {
-            if (!anotacaoDAO.atualizar(anotacao))
-                throw new RuntimeException("Nenhuma anotação encontrada para atualizar com o ID: " + anotacao.getId());
+            if (!anotacaoDAO.atualizar(anotacao)) {
+                System.out.println("Nenhuma anotação encontrada para atualizar com o ID: " + anotacao.getId());
+                return false;
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar anotação no banco de dados: " + e.getMessage());
+            System.out.println("Erro ao atualizar anotação no banco de dados: " + e.getMessage());
+            return false;
         }
+
+        return true;
     }
 
-    public void excluirAnotacao(int id) {
+    public boolean excluirAnotacao(int id) {
         try {
-            if (!anotacaoDAO.excluir(id))
-                throw new RuntimeException("Nenhuma anotação encontrada para excluir com o ID: " + id);
+            if (!anotacaoDAO.excluir(id)) {
+                System.out.println("Nenhuma anotação encontrada para excluir com o ID: " + id);
+                return false;
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir anotação no banco de dados: " + e.getMessage());
+            System.out.println("Erro ao excluir anotação no banco de dados: " + e.getMessage());
+            return false;
         }
+
+        return true;
     }
 
-    public void copiarAnotacao(int id) {
+    public boolean copiarAnotacao(int id) {
         Anotacao anotacao = anotacaoDAO.buscarPorId(id);
 
-        if (anotacao == null)
-            throw new RuntimeException("Nenhuma anotação encontrada com o ID: " + id);
+        if (anotacao == null) {
+            System.out.println("Nenhuma anotação encontrada com o ID: " + id);
+            return false;
+        }
 
-        this.criarAnotacao(anotacao.getTitulo(), anotacao.getDescricao(), anotacao.getCor(), anotacao.getFoto());
+        return this.criarAnotacao(anotacao.getTitulo(), anotacao.getDescricao(), anotacao.getCor(), anotacao.getFoto());
     }
 
     public Anotacao buscarPorId(int id) {
         Anotacao anotacao = anotacaoDAO.buscarPorId(id);
 
         if (anotacao == null)
-            throw new RuntimeException("Nenhuma anotação encontrada com o ID: " + id);
+            System.out.println("Nenhuma anotação encontrada com o ID: " + id);
 
         return anotacao;
     }
